@@ -10,8 +10,9 @@ import config from './config';
     resolvers: Resolvers
   })
   
-  const app = new ApolloServer({ 
+  const app = new ApolloServer({
     schema,
+    context: ({ req: request, res: response }) => ({ request, response }),
     formatError: (error) => {
       // Temos que lidar com erros do Servidor,
       // Esses erros pode conter informações sensíveis,

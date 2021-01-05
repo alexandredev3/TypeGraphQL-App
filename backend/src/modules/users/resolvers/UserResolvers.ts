@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Arg } from 'type-graphql';
+import { Resolver, Query, Mutation, Arg, UseMiddleware, Ctx } from 'type-graphql';
 import { PrismaClient } from '@prisma/client';
 import { ApolloError } from 'apollo-server';
 
@@ -8,6 +8,9 @@ import IHashProvider from '../providers/HashProvider/models/IHashProvider';
 import UserInputType from '../types/UserTypes';
 
 import User from '../models/User';
+
+import AuthenticationContext from '../context/authenticationContext';
+import ensureAuthentication from '../middleware/ensureAuthentication';
 
 @Resolver(User)
 class UserResolvers {
@@ -20,6 +23,7 @@ class UserResolvers {
   }
 
   @Query(() => [User])
+  @UseMiddleware(ensureAuthentication)
   async users() {
     const users = await this.prismaService.user.findMany();
 
@@ -27,6 +31,7 @@ class UserResolvers {
   }
 
   @Query(() => User)
+  @UseMiddleware(ensureAuthentication)
   async user(
     @Arg('user_id') user_id: string
   ) {
