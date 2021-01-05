@@ -1,5 +1,11 @@
-import UserResolvers from './users/resolvers/UserResolvers';
+import { NonEmptyArray } from 'type-graphql';
 
-export {
-  UserResolvers
-}
+import UserResolvers from './users/resolvers/UserResolvers';
+import SessionResolvers from './users/resolvers/SessionResolvers';
+
+const Resolvers: NonEmptyArray<Function> = [
+  UserResolvers,
+  SessionResolvers 
+]
+
+export default Resolvers

@@ -10,7 +10,7 @@ import UserInputType from '../types/UserTypes';
 import User from '../models/User';
 
 @Resolver(User)
-class UserResolver {
+class UserResolvers {
   private prismaService: PrismaClient;
   private hashProvider: IHashProvider;
 
@@ -75,4 +75,4 @@ class UserResolver {
   }
 }
 
-export default UserResolver;
+export default UserResolvers;
