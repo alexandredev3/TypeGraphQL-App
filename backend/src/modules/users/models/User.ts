@@ -7,12 +7,6 @@ class User {
 
   @Field()
   name: string;
-
-  @Field()
-  email: string;
-
-  @Field()
-  password: string;
 }
 
 export default User;
