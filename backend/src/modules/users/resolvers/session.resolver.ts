@@ -8,7 +8,8 @@ import config from '../../../config';
 import HashProvider from '../providers/HashProvider/implementations/HashProvider';
 import IHashProvider from '../providers/HashProvider/models/IHashProvider';
 
-import Session from '../models/Session';
+import Session from '../types/session-type';
+import SessionInput from '../inputs/session-input';
 
 class SessionResolvers {
   private prismaService: PrismaClient;
@@ -21,9 +22,10 @@ class SessionResolvers {
 
   @Mutation(() => Session)
   async Session(
-    @Arg('email') email: string,
-    @Arg('password') password: string
+    @Arg('sessionInput') sessionInput: SessionInput,
   ) {
+    const { email, password } = sessionInput;
+
     const user = await this.prismaService.user.findUnique({
       where: { email }
     });

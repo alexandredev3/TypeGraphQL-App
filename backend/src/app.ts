@@ -1,43 +1,27 @@
 import 'reflect-metadata';
-import { ApolloServer, ApolloError, AuthenticationError } from 'apollo-server';
-import { buildSchema } from 'type-graphql';
+import { ApolloServer } from 'apollo-server';
+import { buildSchema} from 'type-graphql';
+
+import ensureAuthentication from './middlewares/ensureAuthentication';
+import exceptionHandle from './errors/exceptionHandle';
 
 import Resolvers from './modules';
+
 import config from './config';
 
 (async function initApp() {
   const schema = await buildSchema({
-    resolvers: Resolvers
+    resolvers: Resolvers,
+    validate: true,
+    authChecker: ensureAuthentication
   })
   
   const app = new ApolloServer({
     schema,
-    context: ({ req: request, res: response }) => ({ request, response }),
-    formatError: (error) => {
-      // Temos que lidar com erros do Servidor,
-      // Esses erros pode conter informações sensíveis,
-      // como por exemplo credenciais da nossa base de dados.
-      if (error.originalError instanceof AuthenticationError) {
-        return {
-          message: error.message,
-          code: error.extensions?.code
-        }
-      }
-      
-      if (error.originalError instanceof ApolloError) {
-        return {
-          message: error.message,
-          code: error.extensions?.code
-        }
-      }
-
-      console.log(error)
-
-      return {
-        message: 'Internal Server Error',
-        code: 'INTERNAL_SERVER_ERROR'
-      };
-    }
+    context: ({ req: request, res: response }) => ({ 
+      request, response 
+    }),
+    formatError: (error) => exceptionHandle(error)
   });
   
   const { port } = config.server;

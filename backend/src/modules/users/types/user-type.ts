@@ -7,6 +7,9 @@ class User {
 
   @Field()
   name: string;
+
+  @Field()
+  bio: string;
 }
 
 export default User;

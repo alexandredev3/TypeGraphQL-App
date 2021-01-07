@@ -1,10 +1,10 @@
-import { MiddlewareFn } from 'type-graphql';
+import { AuthChecker } from 'type-graphql';
 import { AuthenticationError } from 'apollo-server';
 import jwt from 'jsonwebtoken';
 
 import AuthenticationContext from '../context/authenticationContext';
 
-import config from '../../../config';
+import config from '..//config';
 
 interface IDecoded {
   id: string;
@@ -32,18 +32,19 @@ const verify = (token: string): Promise<IDecoded> => new Promise((resolve, rejec
   return resolve(decoded as unknown as IDecoded);
 });
 
-const ensureAuthentication: MiddlewareFn<AuthenticationContext> = async ({ context }, next) => {
+const authChecker: AuthChecker<AuthenticationContext> = async ({ context }) => {
   const token = extractToken(context);
 
   return verify(token)
     .then((decoded) => {
       context.payload = decoded;
 
-      return next();
+      return true
     })
     .catch(() => {
+      false
       throw new AuthenticationError('Invalid authentication token');
     });
 }
 
-export default ensureAuthentication;
+export default authChecker;

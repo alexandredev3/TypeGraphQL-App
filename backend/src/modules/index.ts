@@ -1,11 +1,11 @@
 import { NonEmptyArray } from 'type-graphql';
 
-import UserResolvers from './users/resolvers/UserResolvers';
-import SessionResolvers from './users/resolvers/SessionResolvers';
+import UserResolver from './users/resolvers/user.resolver';
+import SessionResolver from './users/resolvers/session.resolver';
 
 const Resolvers: NonEmptyArray<Function> = [
-  UserResolvers,
-  SessionResolvers 
+  UserResolver,
+  SessionResolver 
 ]
 
 export default Resolvers

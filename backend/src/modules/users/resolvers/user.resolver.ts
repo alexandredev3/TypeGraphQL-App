@@ -1,16 +1,13 @@
-import { Resolver, Query, Mutation, Arg, UseMiddleware, Ctx } from 'type-graphql';
+import { Resolver, Query, Mutation, Arg, UseMiddleware, Authorized } from 'type-graphql';
 import { PrismaClient } from '@prisma/client';
 import { ApolloError } from 'apollo-server';
 
 import HashProvider from '../providers/HashProvider/implementations/HashProvider';
 import IHashProvider from '../providers/HashProvider/models/IHashProvider';
 
-import UserInputType from '../types/UserTypes';
+import UserInput from '../inputs/user-input';
 
-import User from '../models/User';
-
-import AuthenticationContext from '../context/authenticationContext';
-import ensureAuthentication from '../middleware/ensureAuthentication';
+import User from '../types/user-type';
 
 @Resolver(User)
 class UserResolvers {
@@ -23,7 +20,7 @@ class UserResolvers {
   }
 
   @Query(() => [User])
-  @UseMiddleware(ensureAuthentication)
+  @Authorized()
   async users() {
     const users = await this.prismaService.user.findMany();
 
@@ -31,7 +28,7 @@ class UserResolvers {
   }
 
   @Query(() => User)
-  @UseMiddleware(ensureAuthentication)
+  @Authorized()
   async user(
     @Arg('user_id') user_id: string
   ) {
@@ -46,9 +43,9 @@ class UserResolvers {
 
   @Mutation(() => User)
   async createUser(
-    @Arg('userInput') userInput: UserInputType
+    @Arg('userInput', { validate: true }) userArgs: UserInput
   ) {
-    const { name, email, password, bio } = userInput;
+    const { name, email, password, bio } = userArgs;
 
     const userExists = await this.prismaService.user.findUnique({
       where: {
