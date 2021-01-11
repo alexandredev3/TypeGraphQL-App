@@ -1,12 +1,12 @@
 import 'reflect-metadata';
 import { ApolloServer } from 'apollo-server';
 import { buildSchema} from 'type-graphql';
+import { PrismaClient } from '@prisma/client';
 
 import ensureAuthentication from './middlewares/ensureAuthentication';
 import exceptionHandle from './errors/exceptionHandle';
-
+import contextHandle from './context';
 import Resolvers from './modules';
-
 import config from './config';
 
 (async function initApp() {
@@ -16,11 +16,11 @@ import config from './config';
     authChecker: ensureAuthentication
   })
   
+  const prisma = new PrismaClient();
+
   const app = new ApolloServer({
     schema,
-    context: ({ req: request, res: response }) => ({ 
-      request, response 
-    }),
+    context: ({ req, res }) => contextHandle({ req, res, prisma }),
     formatError: (error) => exceptionHandle(error)
   });
   

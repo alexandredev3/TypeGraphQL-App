@@ -2,7 +2,7 @@ import { AuthChecker } from 'type-graphql';
 import { AuthenticationError } from 'apollo-server';
 import jwt from 'jsonwebtoken';
 
-import AuthenticationContext from '../context/authenticationContext';
+import GraphqlContext from '../context/GraphqlContext';
 
 import config from '..//config';
 
@@ -10,7 +10,7 @@ interface IDecoded {
   id: string;
 }
 
-const extractToken = (context: AuthenticationContext) => {
+const extractToken = (context: GraphqlContext) => {
   const authorization = context.request.headers.authorization || '';
 
   const token = authorization.replace('Bearer ', '');
@@ -32,7 +32,7 @@ const verify = (token: string): Promise<IDecoded> => new Promise((resolve, rejec
   return resolve(decoded as unknown as IDecoded);
 });
 
-const authChecker: AuthChecker<AuthenticationContext> = async ({ context }) => {
+const authChecker: AuthChecker<GraphqlContext> = async ({ context }) => {
   const token = extractToken(context);
 
   return verify(token)

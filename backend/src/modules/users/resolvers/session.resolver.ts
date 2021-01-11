@@ -1,7 +1,9 @@
-import { Mutation, Arg } from 'type-graphql';
+import { Mutation, Arg, Ctx } from 'type-graphql';
 import { PrismaClient } from '@prisma/client';
 import { AuthenticationError } from 'apollo-server';
 import { sign } from 'jsonwebtoken';
+
+import GraphqlContext from '../../../context/GraphqlContext';
 
 import config from '../../../config';
 
@@ -23,10 +25,11 @@ class SessionResolvers {
   @Mutation(() => Session)
   async Session(
     @Arg('sessionInput') sessionInput: SessionInput,
+    @Ctx() { prisma }: GraphqlContext
   ) {
     const { email, password } = sessionInput;
 
-    const user = await this.prismaService.user.findUnique({
+    const user = await prisma.user.findUnique({
       where: { email }
     });
 

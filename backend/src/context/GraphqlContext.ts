@@ -1,8 +1,10 @@
 import { Request, Response } from 'express';
+import { PrismaClient } from '@prisma/client';
 
-export default interface AuthenticationContext {
+export default interface GraphqlContext {
   request: Request;
   response: Response;
+  prisma: PrismaClient;
   payload: {
     id: string;
   }
