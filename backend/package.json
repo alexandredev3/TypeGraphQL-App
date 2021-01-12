@@ -26,6 +26,7 @@
     "prisma-client-lib": "^1.34.10",
     "reflect-metadata": "^0.1.13",
     "sqlite3": "^5.0.1",
-    "type-graphql": "^1.1.1"
+    "type-graphql": "^1.1.1",
+    "uuidv4": "^6.2.6"
   }
 }

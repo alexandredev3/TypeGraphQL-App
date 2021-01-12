@@ -1,13 +1,13 @@
 import { Resolver, Query, Mutation, Arg, Authorized, Ctx } from 'type-graphql';
-import { PrismaClient } from '@prisma/client';
 import { ApolloError } from 'apollo-server';
 
 import HashProvider from '../providers/HashProvider/implementations/HashProvider';
 import IHashProvider from '../providers/HashProvider/models/IHashProvider';
 
 import UserInput from '../inputs/user-input';
-
 import User from '../types/user-type';
+import UserPosts from '../types/user-posts-type';
+
 import GraphqlContext from '../../../context/GraphqlContext';
 
 @Resolver(User)
@@ -18,17 +18,21 @@ class UserResolvers {
     this.hashProvider = new HashProvider();
   }
 
-  @Query(() => [User])
+  @Query(() => [UserPosts])
   @Authorized()
   async users(
     @Ctx() { prisma }: GraphqlContext
   ) {
-    const users = await prisma.user.findMany();
+    const users = await prisma.user.findMany({
+      include: {
+        posts: true
+      }
+    });
 
     return users;
   }
 
-  @Query(() => User)
+  @Query(() => UserPosts)
   @Authorized()
   async user(
     @Arg('user_id') user_id: string,
@@ -37,8 +41,15 @@ class UserResolvers {
     const user = await prisma.user.findUnique({
       where: {
         id: user_id
+      },
+      include: {
+        posts: true
       }
-    });
+    })
+
+    if (!user) {
+      throw new ApolloError('User does not exists', 'ERROR')
+    }
 
     return user;
   }

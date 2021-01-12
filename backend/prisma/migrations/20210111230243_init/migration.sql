@@ -2,7 +2,7 @@
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
-    "bio" TEXT NOT NULL,
+    "bio" TEXT,
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
 
@@ -24,4 +24,4 @@ CREATE TABLE "Post" (
 CREATE UNIQUE INDEX "User.email_unique" ON "User"("email");
 
 -- AddForeignKey
-ALTER TABLE "Post" ADD FOREIGN KEY("id")REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Post" ADD FOREIGN KEY("authorId")REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

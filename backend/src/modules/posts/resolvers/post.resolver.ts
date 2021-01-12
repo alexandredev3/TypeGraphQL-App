@@ -12,16 +12,20 @@ class PostResolvers {
   async posts(
     @Ctx() { prisma }: GraphqlContext
   ) {
-    const posts = await prisma.post.findMany();
+    const posts = await prisma.post.findMany({
+      include: {
+        author: true
+      }
+    });
 
-    return posts;
+    return posts
   }
 
   @Mutation(() => Post)
   @Authorized()
   async createPost(
+    @Arg('postArgs') postArgs: PostInput,
     @Ctx() { prisma, payload }: GraphqlContext,
-    @Arg('userArgs') postArgs: PostInput
   ) {
     const { 
       title,
@@ -34,7 +38,12 @@ class PostResolvers {
       data: {
         title,
         description,
-        authorId: id
+        published: true,
+        author: {
+          connect: {
+            id
+          }
+        }
       }
     });
 

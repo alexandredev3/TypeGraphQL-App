@@ -11,7 +11,7 @@ generator client {
 }
 
 model User {
-  id String @default(uuid()) @id
+  id String @id @default(uuid())
 
   name String
 
@@ -25,7 +25,7 @@ model User {
 }
 
 model Post {
-  id String @default(uuid()) @id
+  id String @id @default(uuid())
 
   title String
 
@@ -33,7 +33,7 @@ model Post {
 
   published Boolean @default(false)
 
-  author User @relation(fields: [id], references: [id])
+  author User @relation(fields: [authorId], references: [id])
 
   authorId String
 }
