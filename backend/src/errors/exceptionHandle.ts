@@ -24,20 +24,14 @@ const exceptionHandle = (error: GraphQLError) => {
 
   const isInternalServerError = extensions?.code === "INTERNAL_SERVER_ERROR";
 
-  const errorsFormated: Errors = {
-    message,
-    extensions: {
-      code: 'GRAPHQL_VALIDATION_FAILED',
-      validationErrors: error.extensions?.exception.validationErrors
-    }
-  }
-  
   if (error.originalError instanceof ArgumentValidationError) {
-    return errorsFormated;
-  }
-
-  if (NODE_ENV === 'development') {
-    return error;
+    return {
+      message,
+      extensions: {
+        code: 'GRAPHQL_VALIDATION_FAILED',
+        validationErrors: error.extensions?.exception.validationErrors
+      }
+    };
   }
 
   if (isInternalServerError) {
@@ -49,7 +43,13 @@ const exceptionHandle = (error: GraphQLError) => {
     }
   }
 
-  return errorsFormated;
+  return {
+    message,
+    extensions: {
+      code: extensions?.code,
+      validationErrors: error.extensions?.exception.validationErrors
+    }
+  };
 }
 
 export default exceptionHandle;
